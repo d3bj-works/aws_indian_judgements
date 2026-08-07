@@ -1,6 +1,6 @@
 import time
 import os
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, Tuple, Optional
 
 from config import PipelineConfig
 from pipeline.downloader import PDFDownloader
