@@ -21,29 +21,33 @@ class StorageManager:
     def save_raw_text(self, doc_id: str, text: str) -> str:
         safe_id = self._safe_filename(doc_id)
         path = os.path.join(self.config.raw_text_dir, f"{safe_id}.txt")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(text)
+        if self.config.keep_intermediate_artifacts:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(text)
         return path
 
     def save_clean_text(self, doc_id: str, text: str) -> str:
         safe_id = self._safe_filename(doc_id)
         path = os.path.join(self.config.clean_text_dir, f"{safe_id}.txt")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(text)
+        if self.config.keep_intermediate_artifacts:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(text)
         return path
 
     def save_metadata(self, doc_id: str, metadata: Dict[str, Any]) -> str:
         safe_id = self._safe_filename(doc_id)
         path = os.path.join(self.config.metadata_dir, f"{safe_id}.json")
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(metadata, f, indent=2, ensure_ascii=False)
+        if self.config.keep_intermediate_artifacts:
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(metadata, f, indent=2, ensure_ascii=False)
         return path
 
     def save_entities(self, doc_id: str, entities: Dict[str, Any]) -> str:
         safe_id = self._safe_filename(doc_id)
         path = os.path.join(self.config.entities_dir, f"{safe_id}.json")
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(entities, f, indent=2, ensure_ascii=False)
+        if self.config.keep_intermediate_artifacts:
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(entities, f, indent=2, ensure_ascii=False)
         return path
 
     def log_jsonl_event(self, event_data: Dict[str, Any]):
@@ -62,6 +66,7 @@ class StorageManager:
         """Atomic write of pipeline progress checkpoint."""
         ckpt_path = os.path.join(self.config.checkpoints_dir, "checkpoint.json")
         tmp_path = ckpt_path + ".tmp"
+        os.makedirs(self.config.checkpoints_dir, exist_ok=True)
         with open(tmp_path, "w", encoding="utf-8") as f:
             json.dump(checkpoint_data, f, indent=2)
         os.replace(tmp_path, ckpt_path)
@@ -80,8 +85,13 @@ class StorageManager:
     def is_document_processed(self, doc_id: str) -> bool:
         """
         Checks whether a document has already been successfully processed
-        by checking for valid presence of output entity and clean text files.
+        by checking checkpoint set or presence of output files.
         """
+        ckpt = self.load_checkpoint()
+        completed_ids = set(ckpt.get("completed_doc_ids", []))
+        if doc_id in completed_ids:
+            return True
+
         safe_id = self._safe_filename(doc_id)
         ent_path = os.path.join(self.config.entities_dir, f"{safe_id}.json")
         clean_path = os.path.join(self.config.clean_text_dir, f"{safe_id}.txt")
@@ -89,6 +99,7 @@ class StorageManager:
             os.path.exists(ent_path) and os.path.getsize(ent_path) > 10 and
             os.path.exists(clean_path) and os.path.getsize(clean_path) > 10
         )
+
 
     def get_completed_doc_ids(self) -> set:
         """Returns a set of doc_ids that have completed processing."""

@@ -6,14 +6,17 @@ from typing import Optional
 class PipelineConfig:
     run_id: str = "20260807-001"
     base_output_dir: str = "./output"
-    batch_size: int = 5
-    max_workers: int = 4
+    drive_output_dir: Optional[str] = None  # Google Drive persistent output path (for Parquet & Checkpoint)
+    local_scratch_dir: Optional[str] = None  # Local NVMe/SSD scratch directory for Colab
+    batch_size: int = 50
+    max_workers: int = 16
     retry_limit: int = 3
     benchmark_pdf_limit: int = 1000
     s3_base_url: str = "https://indian-supreme-court-judgments.s3.amazonaws.com"
     resume_enabled: bool = True
     keep_pdf_files: bool = False  # Purge raw PDF after extraction to optimize disk & RAM
-    max_ram_threshold_mb: int = 4096  # Target maximum process RAM safety limit
+    keep_intermediate_artifacts: bool = True  # Set False in Colab to avoid writing thousands of small TXT/JSON files
+    max_ram_threshold_mb: int = 8192  # Target maximum process RAM safety limit
     
     # Subdirectories
     pdf_dir: str = field(init=False)
@@ -28,15 +31,22 @@ class PipelineConfig:
     auto_export_parquet: bool = False
 
     def __post_init__(self):
-        self.pdf_dir = os.path.join(self.base_output_dir, "pdf")
-        self.raw_text_dir = os.path.join(self.base_output_dir, "raw_text")
-        self.clean_text_dir = os.path.join(self.base_output_dir, "clean_text")
-        self.metadata_dir = os.path.join(self.base_output_dir, "metadata")
-        self.entities_dir = os.path.join(self.base_output_dir, "entities")
-        self.logs_dir = os.path.join(self.base_output_dir, "logs")
-        self.benchmarks_dir = os.path.join(self.base_output_dir, "benchmarks")
-        self.checkpoints_dir = os.path.join(self.base_output_dir, "checkpoints")
-        self.parquet_dir = os.path.join(self.base_output_dir, "parquet")
+        # Staging directory for intermediate files (uses local scratch if provided)
+        staging_dir = self.local_scratch_dir if self.local_scratch_dir else self.base_output_dir
+        # Drive output directory for persistent outputs (Parquet, checkpoints, logs)
+        persistent_dir = self.drive_output_dir if self.drive_output_dir else self.base_output_dir
+
+        self.pdf_dir = os.path.join(staging_dir, "pdf")
+        self.raw_text_dir = os.path.join(staging_dir, "raw_text")
+        self.clean_text_dir = os.path.join(staging_dir, "clean_text")
+        self.metadata_dir = os.path.join(staging_dir, "metadata")
+        self.entities_dir = os.path.join(staging_dir, "entities")
+        
+        self.logs_dir = os.path.join(persistent_dir, "logs")
+        self.benchmarks_dir = os.path.join(persistent_dir, "benchmarks")
+        self.checkpoints_dir = os.path.join(persistent_dir, "checkpoints")
+        self.parquet_dir = os.path.join(persistent_dir, "parquet")
+
 
     def ensure_directories(self):
         """Creates all intermediate storage directories if they do not exist."""

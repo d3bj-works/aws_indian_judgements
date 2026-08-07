@@ -1,0 +1,107 @@
+statute_a,statute_b,shared_cases
+"Indian Evidence Act, 1872","Indian Penal Code, 1860",2187
+"Indian Penal Code, 1860","Indian Evidence Act, 1872",2187
+"Code of Criminal Procedure, 1973","Indian Penal Code, 1860",1740
+"Indian Penal Code, 1860","Code of Criminal Procedure, 1973",1740
+Constitution of India,"Indian Penal Code, 1860",971
+"Indian Penal Code, 1860",Constitution of India,971
+"Companies Act, 1956",Constitution of India,730
+Constitution of India,"Companies Act, 1956",730
+"Indian Evidence Act, 1872","Code of Criminal Procedure, 1973",707
+"Code of Criminal Procedure, 1973","Indian Evidence Act, 1872",707
+"Indian Evidence Act, 1872",Constitution of India,584
+Constitution of India,"Indian Evidence Act, 1872",584
+"Companies Act, 1956","Income Tax Act, 1961",511
+"Income Tax Act, 1961","Companies Act, 1956",511
+"Code of Criminal Procedure, 1973",Constitution of India,468
+Constitution of India,"Code of Criminal Procedure, 1973",468
+"Companies Act, 1956","Indian Penal Code, 1860",466
+"Code of Civil Procedure, 1908","Limitation Act, 1963",466
+"Limitation Act, 1963","Code of Civil Procedure, 1908",466
+"Indian Penal Code, 1860","Companies Act, 1956",466
+"Code of Civil Procedure, 1908",Constitution of India,457
+Constitution of India,"Code of Civil Procedure, 1908",457
+"Indian Evidence Act, 1872","Code of Civil Procedure, 1908",455
+"Code of Civil Procedure, 1908","Indian Evidence Act, 1872",455
+Constitution of India,"Limitation Act, 1963",371
+"Limitation Act, 1963",Constitution of India,371
+"Indian Evidence Act, 1872","Companies Act, 1956",330
+"Companies Act, 1956","Indian Evidence Act, 1872",330
+"Income Tax Act, 1961",Constitution of India,324
+Constitution of India,"Income Tax Act, 1961",324
+"Companies Act, 1956","Code of Civil Procedure, 1908",293
+"Code of Civil Procedure, 1908","Companies Act, 1956",293
+"Limitation Act, 1963","Indian Evidence Act, 1872",284
+"Indian Evidence Act, 1872","Limitation Act, 1963",284
+"Arbitration and Conciliation Act, 1996","Code of Civil Procedure, 1908",277
+"Code of Civil Procedure, 1908","Arbitration and Conciliation Act, 1996",277
+"Income Tax Act, 1961","Indian Penal Code, 1860",273
+"Indian Penal Code, 1860","Income Tax Act, 1961",273
+"Arbitration and Conciliation Act, 1996","Limitation Act, 1963",250
+"Companies Act, 1956","Limitation Act, 1963",250
+"Limitation Act, 1963","Arbitration and Conciliation Act, 1996",250
+"Limitation Act, 1963","Companies Act, 1956",250
+"Companies Act, 1956","Arbitration and Conciliation Act, 1996",226
+"Arbitration and Conciliation Act, 1996","Companies Act, 1956",226
+"Indian Penal Code, 1860","Code of Civil Procedure, 1908",220
+"Code of Civil Procedure, 1908","Indian Penal Code, 1860",220
+"Indian Penal Code, 1860","Limitation Act, 1963",215
+"Limitation Act, 1963","Indian Penal Code, 1860",215
+"Income Tax Act, 1961","Indian Evidence Act, 1872",171
+"Indian Evidence Act, 1872","Income Tax Act, 1961",171
+Constitution of India,"Arbitration and Conciliation Act, 1996",169
+"Arbitration and Conciliation Act, 1996",Constitution of India,169
+"Code of Criminal Procedure, 1973","Companies Act, 1956",164
+"Companies Act, 1956","Code of Criminal Procedure, 1973",164
+"Negotiable Instruments Act, 1881","Indian Penal Code, 1860",151
+"Indian Penal Code, 1860","Negotiable Instruments Act, 1881",151
+"Code of Civil Procedure, 1908","Code of Criminal Procedure, 1973",128
+"Code of Criminal Procedure, 1973","Code of Civil Procedure, 1908",128
+"Arbitration and Conciliation Act, 1996","Indian Evidence Act, 1872",126
+"Indian Evidence Act, 1872","Arbitration and Conciliation Act, 1996",126
+"Limitation Act, 1963","Code of Criminal Procedure, 1973",121
+"Code of Criminal Procedure, 1973","Limitation Act, 1963",121
+"Companies Act, 1956","Negotiable Instruments Act, 1881",121
+"Negotiable Instruments Act, 1881","Companies Act, 1956",121
+"Code of Civil Procedure, 1908","Income Tax Act, 1961",115
+"Income Tax Act, 1961","Code of Civil Procedure, 1908",115
+"Income Tax Act, 1961","Limitation Act, 1963",105
+"Limitation Act, 1963","Income Tax Act, 1961",105
+"Negotiable Instruments Act, 1881","Code of Criminal Procedure, 1973",103
+"Indian Evidence Act, 1872","Negotiable Instruments Act, 1881",103
+"Negotiable Instruments Act, 1881","Indian Evidence Act, 1872",103
+"Code of Criminal Procedure, 1973","Negotiable Instruments Act, 1881",103
+"Income Tax Act, 1961","Code of Criminal Procedure, 1973",80
+"Code of Criminal Procedure, 1973","Income Tax Act, 1961",80
+"Indian Penal Code, 1860","Arbitration and Conciliation Act, 1996",78
+"Arbitration and Conciliation Act, 1996","Indian Penal Code, 1860",78
+"Income Tax Act, 1961","Arbitration and Conciliation Act, 1996",68
+"Arbitration and Conciliation Act, 1996","Income Tax Act, 1961",68
+"Negotiable Instruments Act, 1881",Constitution of India,40
+Constitution of India,"Negotiable Instruments Act, 1881",40
+"Negotiable Instruments Act, 1881","Limitation Act, 1963",37
+"Limitation Act, 1963","Negotiable Instruments Act, 1881",37
+"Code of Civil Procedure, 1908","Negotiable Instruments Act, 1881",33
+"Negotiable Instruments Act, 1881","Code of Civil Procedure, 1908",33
+"Code of Criminal Procedure, 1973","Arbitration and Conciliation Act, 1996",26
+"Arbitration and Conciliation Act, 1996","Code of Criminal Procedure, 1973",26
+"Negotiable Instruments Act, 1881","Arbitration and Conciliation Act, 1996",25
+"Arbitration and Conciliation Act, 1996","Negotiable Instruments Act, 1881",25
+"Income Tax Act, 1961","Negotiable Instruments Act, 1881",22
+"Negotiable Instruments Act, 1881","Income Tax Act, 1961",22
+Bharatiya Nyaya Sanhita,Constitution of India,14
+Constitution of India,Bharatiya Nyaya Sanhita,14
+"Indian Penal Code, 1860",Bharatiya Nyaya Sanhita,9
+Bharatiya Nyaya Sanhita,"Indian Penal Code, 1860",9
+"Code of Civil Procedure, 1908",Bharatiya Nyaya Sanhita,5
+Bharatiya Nyaya Sanhita,"Code of Criminal Procedure, 1973",5
+"Code of Criminal Procedure, 1973",Bharatiya Nyaya Sanhita,5
+Bharatiya Nyaya Sanhita,"Code of Civil Procedure, 1908",5
+Bharatiya Nyaya Sanhita,"Companies Act, 1956",4
+"Companies Act, 1956",Bharatiya Nyaya Sanhita,4
+Bharatiya Nyaya Sanhita,"Indian Evidence Act, 1872",3
+"Limitation Act, 1963",Bharatiya Nyaya Sanhita,3
+"Indian Evidence Act, 1872",Bharatiya Nyaya Sanhita,3
+Bharatiya Nyaya Sanhita,"Limitation Act, 1963",3
+"Income Tax Act, 1961",Bharatiya Nyaya Sanhita,1
+Bharatiya Nyaya Sanhita,"Income Tax Act, 1961",1

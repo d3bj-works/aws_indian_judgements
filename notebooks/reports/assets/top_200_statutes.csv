@@ -1,0 +1,201 @@
+rank,statute,total_citations,unique_sections_count,max_document_count
+1,"Indian Penal Code, 1860",234950,1300,3311
+2,"Code of Criminal Procedure, 1973",104186,1029,811
+3,"Code of Civil Procedure, 1908",97174,763,450
+4,"Limitation Act, 1963",45420,415,327
+5,"Income Tax Act, 1961",39976,728,148
+6,"Indian Evidence Act, 1872",31493,535,231
+7,"Land Acquisition Act, 1894",22739,317,738
+8,"Customs Act, 1962",14088,388,77
+9,"Companies Act, 1956 / 2013",13508,586,101
+10,"Transfer of Property Act, 1882",11716,311,132
+11,"Industrial Disputes Act, 1947",11128,286,220
+12,"General Clauses Act, 1897",10925,320,163
+13,"Arbitration Act, 1940 / 1996",10409,207,157
+14,"Negotiable Instruments Act, 1881",9262,216,319
+15,"Arbitration & Conciliation Act, 1996",9115,179,243
+16,"Indian Contract Act, 1872",8868,302,89
+17,"Motor Vehicles Act, 1988",8389,279,178
+18,"NDPS Act, 1985",8209,223,81
+19,"Companies Act, 1956",6948,485,106
+20,"Registration Act, 1908",5627,223,122
+21,"Prevention of Corruption Act, 1988",5065,228,165
+22,"Specific Relief Act, 1963",4142,168,60
+23,"Representation of the People Act, 1951",3801,226,109
+24,"SARFAESI Act, 2002",3491,118,71
+25,"Central Excise Act, 1944",3141,179,74
+26,"Arbitration Act, 1940",2920,122,84
+27,"Consumer Protection Act, 1986",2759,155,101
+28,Finance Act,2554,265,54
+29,U.P. Act,2537,195,89
+30,"Companies Act, 2013",2357,252,42
+31,MRTP Act,2135,137,31
+32,Rent Act,2068,141,43
+33,Tenancy Act,1983,178,27
+34,Bombay Act,1950,191,39
+35,IT Act,1854,176,15
+36,Arms Act,1708,159,121
+37,LA Act,1607,71,47
+38,Central Sales Tax Act,1575,67,53
+39,"Central Sales Tax Act, 1956",1563,91,59
+40,"Essential Commodities Act, 1955",1512,106,96
+41,Stamp Act,1502,104,29
+42,"Electricity Act, 2003",1485,130,34
+43,TADA Act,1448,95,45
+44,Hindu Succession Act,1387,73,67
+45,Abolition Act,1370,120,37
+46,Electricity Act,1329,133,23
+47,C Act,1273,128,23
+48,"Hindu Succession Act, 1956",1240,80,78
+49,Madras Act,1204,144,56
+50,In this Act,1173,125,210
+51,L.A. Act,1158,75,33
+52,"Insolvency and Bankruptcy Code, 2016",1139,131,63
+53,"Delhi Rent Control Act, 1958",1087,83,96
+54,Factories Act,1034,84,59
+55,SEBI Act,1008,103,24
+56,PC Act,990,89,55
+57,CGST Act,988,62,5
+58,Punjab Act,983,115,28
+59,"Government of India Act, 1935",937,165,28
+60,Subject to the provisions of this Act,904,125,48
+61,Acquisition Act,879,75,36
+62,Army Act,862,108,13
+63,ID Act,846,74,41
+64,"Banking Regulation Act, 1949",837,102,24
+65,Forest Act,833,62,11
+66,T.P. Act,833,84,13
+67,Bihar Act,824,90,32
+68,Delhi Rent Control Act,809,83,67
+69,Maharashtra Act,799,108,24
+70,Ceiling Act,788,69,19
+71,Wealth Tax Act,780,88,38
+72,TP Act,777,87,17
+73,A Act,768,125,22
+74,"Hindu Marriage Act, 1955",758,65,87
+75,Act and the Rules,748,134,23
+76,Notwithstanding anything contained in this Act,743,147,20
+77,"Finance Act, 1994",743,83,41
+78,Partnership Act,736,78,26
+79,"Right to Fair Compensation and Transparency in Land Acquisition, Rehabilitation and Resettlement Act, 2013",727,64,104
+80,B Code,709,62,18
+81,Land Reforms Act,698,124,21
+82,D Act,697,138,25
+83,Hindu Marriage Act,695,62,58
+84,Bombay Rent Act,693,68,20
+85,"Indian Electricity Act, 1910",670,87,22
+86,Succession Act,666,95,26
+87,N.I. Act,663,49,51
+88,Indian Succession Act,654,124,31
+89,"Bombay Tenancy and Agricultural Lands Act, 1948",653,87,21
+90,R.P. Act,651,45,16
+91,MMDR Act,646,50,11
+92,"Securitisation and Reconstruction of Financial Assets and Enforcement of Security Interest Act, 2002",641,75,49
+93,"Prevention of Food Adulteration Act, 1954",632,73,56
+94,"Customs Tariff Act, 1975",631,63,63
+95,E Act,631,111,18
+96,B Act,621,115,28
+97,The scheme of the Act,619,94,17
+98,RTI Act,615,39,15
+99,Foreign Exchange Regulation Act,607,85,19
+100,IGST Act,604,39,5
+101,Mysore Act,597,80,15
+102,Tamil Nadu Act,591,77,39
+103,Sale of Goods Act,588,74,39
+104,"Factories Act, 1948",588,88,54
+105,Foreign Awards Act,583,36,16
+106,Supply Act,578,65,12
+107,Kerala Act,577,78,14
+108,Railways Act,573,79,8
+109,Government of India Act,569,142,14
+110,"Indian Succession Act, 1925",567,130,24
+111,"Army Act, 1950",561,89,17
+112,Explosive Substances Act,560,58,23
+113,"Arms Act, 1959",559,84,53
+114,G Act,557,111,17
+115,Advocates Act,545,58,23
+116,CST Act,532,37,14
+117,New Act,520,71,7
+118,Notwithstanding anything contained in the Code,518,110,28
+119,Tax Act,507,106,20
+120,Old Act,503,96,10
+121,Copyright Act,498,57,8
+122,Schedule to the Act,495,76,34
+123,Under the Act,493,120,20
+124,Standing Order,489,82,15
+125,Customs Tariff Act,489,52,37
+126,Nationalisation Act,488,45,14
+127,English Act,487,95,10
+128,Haryana Act,487,54,13
+129,F Act,486,110,18
+130,"Amendment Act, 2015",484,40,16
+131,Aadhaar Act,483,54,4
+132,"Mines Act, 1952",467,62,41
+133,"Indian Stamp Act, 1899",466,72,22
+134,"Central Excise Rules, 1944",461,58,40
+135,An Act,460,87,59
+136,Orissa Act,455,55,23
+137,"Central Excises and Salt Act, 1944",453,62,47
+138,Insurance Act,453,85,20
+139,Provincial Insolvency Act,453,72,8
+140,RP Act,439,64,11
+141,"Foreign Exchange Regulation Act, 1973",433,90,10
+142,"Estate Duty Act, 1953",432,63,15
+143,"Sale of Goods Act, 1930",430,67,34
+144,The provisions of this Act,427,112,23
+145,ULC Act,425,35,7
+146,The Code,424,110,18
+147,Indian Stamp Act,424,68,13
+148,Tariff Act,423,60,19
+149,"Representation of People Act, 1951",423,78,28
+150,Insolvency and Bankruptcy Code,422,66,23
+151,Estate Duty Act,420,60,14
+152,"Finance Act, 2002",419,63,5
+153,"Contempt of Courts Act, 1971",419,51,59
+154,Property Act,418,80,11
+155,Police Act,417,86,18
+156,NIA Act,409,38,8
+157,COFEPOSA Act,407,25,52
+158,Rent Control Act,407,73,11
+159,"Wealth Tax Act, 1957",405,75,28
+160,Banking Regulation Act,403,52,12
+161,POCSO Act,403,56,14
+162,RBI Act,401,67,7
+163,Societies Act,400,66,6
+164,I.T. Act,399,78,9
+165,H Act,399,86,11
+166,Sales Tax Act,399,59,21
+167,Repeal Act,398,33,15
+168,NGT Act,397,41,16
+169,"Stamp Act, 1899",396,66,11
+170,Municipal Act,395,96,16
+171,"East Punjab Urban Rent Restriction Act, 1949",394,37,60
+172,"Advocates Act, 1961",391,58,27
+173,MV Act,391,79,19
+174,Commercial Courts Act,390,34,14
+175,"Bharatiya Nyaya Sanhita, 2023 (BNS)",383,88,4
+176,"Securities and Exchange Board of India Act, 1992",380,75,13
+177,Karnataka Act,380,80,14
+178,"Delhi Municipal Corporation Act, 1957",379,104,11
+179,Defence of India Rules,378,72,28
+180,West Bengal Act,373,68,23
+181,"Workmen's Compensation Act, 1923",367,63,17
+182,P.C. Act,366,53,23
+183,Citizenship Act,363,25,14
+184,Corporation Act,362,89,8
+185,"Recovery of Debts Due to Banks and Financial Institutions Act, 1993",357,67,12
+186,Land Revenue Act,356,94,10
+187,"Reserve Bank of India Act, 1934",356,77,13
+188,"BR Act, 1949",355,19,3
+189,CIRP Regulations,354,58,12
+190,"Conciliation Act, 1996",354,50,42
+191,SFC Act,353,30,16
+192,"U.P. Zamindari Abolition and Land Reforms Act, 1950",350,85,15
+193,"Railways Act, 1989",348,71,7
+194,Development Act,346,56,8
+195,Bombay Police Act,341,79,10
+196,The Rules,338,96,12
+197,E the Act,337,87,10
+198,The provisions of the Act,337,91,17
+199,"Bombay Rents, Hotel and Lodging House Rates Control Act, 1947",336,65,21
+200,TRAI Act,335,29,10

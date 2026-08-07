@@ -17,14 +17,15 @@ class DocumentProcessor:
     Download -> Validate -> Extract Text -> Clean Text -> Metadata -> Entity -> Persist -> Benchmark.
     """
     
-    def __init__(self, config: PipelineConfig, storage: StorageManager):
+    def __init__(self, config: PipelineConfig, storage: StorageManager, downloader: Optional[PDFDownloader] = None):
         self.config = config
         self.storage = storage
-        self.downloader = PDFDownloader(s3_base_url=config.s3_base_url)
+        self.downloader = downloader if downloader else PDFDownloader(s3_base_url=config.s3_base_url, pool_maxsize=config.max_workers * 2)
         self.text_extractor = PyMuPDFTextExtractor()  # Phase 1 Searchable Extractor
         self.cleaner = TextCleaner()
         self.metadata_extractor = MetadataExtractor()
         self.entity_extractor = EntityExtractor()
+
 
     def process_single_pdf(self, s3_key: str, doc_id: str = "") -> Tuple[DocumentMetrics, Dict[str, Any]]:
         if not doc_id:

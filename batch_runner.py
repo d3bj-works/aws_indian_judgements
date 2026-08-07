@@ -15,18 +15,22 @@ from pipeline.storage import StorageManager
 from orchestrator import DocumentProcessor
 from pipeline.tracker import MachineResourceMonitor
 
+from pipeline.downloader import PDFDownloader
+
 class BatchScheduler:
     """
     Schedules and executes PDF processing in configurable batches using ThreadPoolExecutor.
-    Supports continuous live terminal display, checkpointing, RAM management, and resumability.
+    Supports continuous live terminal display, persistent HTTP connection pooling, checkpointing, RAM management, and resumability.
     """
     
     def __init__(self, config: PipelineConfig, storage: StorageManager):
         self.config = config
         self.storage = storage
-        self.processor = DocumentProcessor(config, storage)
+        self.downloader = PDFDownloader(s3_base_url=config.s3_base_url, pool_maxsize=config.max_workers * 2)
+        self.processor = DocumentProcessor(config, storage, downloader=self.downloader)
         self.monitor = MachineResourceMonitor()
         self.console = Console()
+
 
     def run_batch_pipeline(self, s3_keys: List[str]) -> Dict[str, Any]:
         total_pdfs = len(s3_keys)

@@ -4,5 +4,5 @@
 /output_test
 /output_batch_test
 /data
-/notebooks
+.ipynb_checkpoints
 

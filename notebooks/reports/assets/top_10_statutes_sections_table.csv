@@ -1,0 +1,71 @@
+Statute Rank,Statute / Code Name,Statute Total Citations,Section Rank,Section / Provision Name,Frequency,% of Code Citations
+1,Constitution of India,391492,1,Article 14,25313,6.47
+1,Constitution of India,391492,2,Article 226,17267,4.41
+1,Constitution of India,391492,3,Article 19,15149,3.87
+1,Constitution of India,391492,4,Article 32,12328,3.15
+1,Constitution of India,391492,5,Article 21,10632,2.72
+1,Constitution of India,391492,6,Section 3,10093,2.58
+1,Constitution of India,391492,7,Article 136,8775,2.24
+1,Constitution of India,391492,8,Article 16,8005,2.04
+1,Constitution of India,391492,9,Section 2,7002,1.79
+1,Constitution of India,391492,10,Article 31,6145,1.57
+2,"Indian Penal Code, 1860 (IPC)",142280,1,Section 302,15839,11.13
+2,"Indian Penal Code, 1860 (IPC)",142280,2,Section 34,7326,5.15
+2,"Indian Penal Code, 1860 (IPC)",142280,3,Section 304,5353,3.76
+2,"Indian Penal Code, 1860 (IPC)",142280,4,Section 149,4060,2.85
+2,"Indian Penal Code, 1860 (IPC)",142280,5,Section 3,3478,2.44
+2,"Indian Penal Code, 1860 (IPC)",142280,6,Section 376,2654,1.87
+2,"Indian Penal Code, 1860 (IPC)",142280,7,Section 307,2582,1.81
+2,"Indian Penal Code, 1860 (IPC)",142280,8,Section 300,2404,1.69
+2,"Indian Penal Code, 1860 (IPC)",142280,9,Section 482,2385,1.68
+2,"Indian Penal Code, 1860 (IPC)",142280,10,Section 306,1931,1.36
+3,"Code of Civil Procedure, 1908 (CPC)",54466,1,Section 100,1986,3.65
+3,"Code of Civil Procedure, 1908 (CPC)",54466,2,Order VII Rule 11,1237,2.27
+3,"Code of Civil Procedure, 1908 (CPC)",54466,3,Section 34,1139,2.09
+3,"Code of Civil Procedure, 1908 (CPC)",54466,4,Section 11,1056,1.94
+3,"Code of Civil Procedure, 1908 (CPC)",54466,5,Section 151,1034,1.9
+3,"Code of Civil Procedure, 1908 (CPC)",54466,6,Section 2,945,1.74
+3,"Code of Civil Procedure, 1908 (CPC)",54466,7,Section 115,905,1.66
+3,"Code of Civil Procedure, 1908 (CPC)",54466,8,Section 92,903,1.66
+3,"Code of Civil Procedure, 1908 (CPC)",54466,9,Section 9,881,1.62
+3,"Code of Civil Procedure, 1908 (CPC)",54466,10,Section 13,766,1.41
+4,"Code of Criminal Procedure, 1973 (CrPC)",50667,1,Section 482,2616,5.16
+4,"Code of Criminal Procedure, 1973 (CrPC)",50667,2,Section 319,1510,2.98
+4,"Code of Criminal Procedure, 1973 (CrPC)",50667,3,Section 173,1252,2.47
+4,"Code of Criminal Procedure, 1973 (CrPC)",50667,4,Section 167,1132,2.23
+4,"Code of Criminal Procedure, 1973 (CrPC)",50667,5,Section 313,1076,2.12
+4,"Code of Criminal Procedure, 1973 (CrPC)",50667,6,Section 125,927,1.83
+4,"Code of Criminal Procedure, 1973 (CrPC)",50667,7,Section 3,919,1.81
+4,"Code of Criminal Procedure, 1973 (CrPC)",50667,8,Section 197,831,1.64
+4,"Code of Criminal Procedure, 1973 (CrPC)",50667,9,Section 138,818,1.61
+4,"Code of Criminal Procedure, 1973 (CrPC)",50667,10,Section 161,797,1.57
+5,"Limitation Act, 1963",29024,1,Section 5,1825,6.29
+5,"Limitation Act, 1963",29024,2,Section 14,1361,4.69
+5,"Limitation Act, 1963",29024,3,Section 34,1009,3.48
+5,"Limitation Act, 1963",29024,4,Section 18,740,2.55
+5,"Limitation Act, 1963",29024,5,Section 7,738,2.54
+5,"Limitation Act, 1963",29024,6,Section 4,699,2.41
+5,"Limitation Act, 1963",29024,7,Section 29,693,2.39
+5,"Limitation Act, 1963",29024,8,Section 3,570,1.96
+5,"Limitation Act, 1963",29024,9,Section 11,458,1.58
+5,"Limitation Act, 1963",29024,10,Section 12,412,1.42
+6,"Indian Evidence Act, 1872 (IEA)",21544,1,Section 27,240,1.11
+6,"Indian Evidence Act, 1872 (IEA)",21544,2,Section 32,227,1.05
+6,"Indian Evidence Act, 1872 (IEA)",21544,3,Section 114,172,0.8
+6,"Indian Evidence Act, 1872 (IEA)",21544,4,Section 25,141,0.65
+6,"Indian Evidence Act, 1872 (IEA)",21544,5,Section 35,120,0.56
+6,"Indian Evidence Act, 1872 (IEA)",21544,6,Section 68,113,0.52
+6,"Indian Evidence Act, 1872 (IEA)",21544,7,Section 3,111,0.52
+6,"Indian Evidence Act, 1872 (IEA)",21544,8,Section 162,110,0.51
+6,"Indian Evidence Act, 1872 (IEA)",21544,9,Section 145,110,0.51
+6,"Indian Evidence Act, 1872 (IEA)",21544,10,Section 15,108,0.5
+10,"Negotiable Instruments Act, 1881",8360,1,Section 138,2161,25.85
+10,"Negotiable Instruments Act, 1881",8360,2,Section 141,528,6.32
+10,"Negotiable Instruments Act, 1881",8360,3,Section 139,261,3.12
+10,"Negotiable Instruments Act, 1881",8360,4,Section 142,146,1.75
+10,"Negotiable Instruments Act, 1881",8360,5,Section 118,136,1.63
+10,"Negotiable Instruments Act, 1881",8360,6,Section 482,117,1.4
+10,"Negotiable Instruments Act, 1881",8360,7,Section 14,93,1.11
+10,"Negotiable Instruments Act, 1881",8360,8,Section 143A,63,0.75
+10,"Negotiable Instruments Act, 1881",8360,9,Section 22,54,0.65
+10,"Negotiable Instruments Act, 1881",8360,10,Section 200,52,0.62
