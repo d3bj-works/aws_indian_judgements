@@ -242,72 +242,74 @@ class DecoupledPipelineScheduler:
         drive_sync_worker = AsyncDriveSyncWorker(self.storage, interval_sec=180)
         drive_sync_worker.start()
 
-        # Live Dashboard Loop
-        with Live(self._generate_dashboard(0, total_pdfs, 0, 0, total_pdfs, 0, 0, 0, 0, 0, 0, 0, 0), refresh_per_second=4) as live:
-            with ThreadPoolExecutor(max_workers=num_consumers) as executor:
-                active_futures = set()
+        last_log_time = time.time()
+        log_interval_sec = 30.0  # Log clean progress summary line every 30 seconds
 
-                while True:
-                    # Pop next item from Producer Queue
-                    item = self.download_queue.get()
-                    if item is sentinel:
-                        self.download_queue.task_done()
-                        break
+        with ThreadPoolExecutor(max_workers=num_consumers) as executor:
+            active_futures = set()
 
-                    # Dispatch item to Consumer Thread Pool
-                    future = executor.submit(process_item, item)
-                    active_futures.add(future)
+            while True:
+                # Pop next item from Producer Queue
+                item = self.download_queue.get()
+                if item is sentinel:
                     self.download_queue.task_done()
+                    break
 
-                    # Harvest completed futures
-                    completed_futures = {f for f in active_futures if f.done()}
-                    for f in completed_futures:
-                        active_futures.remove(f)
-                        try:
-                            metrics, _ = f.result()
-                            total_pages_processed += metrics.pages
-                            total_download_ms += metrics.download_ms
-                            total_extract_ms += metrics.extract_ms
-                            total_entity_ms += metrics.entity_ms
-                            total_doc_ms += metrics.total_ms
+                # Dispatch item to Consumer Thread Pool
+                future = executor.submit(process_item, item)
+                active_futures.add(future)
+                self.download_queue.task_done()
 
-                            if metrics.status == "success":
-                                completed_count += 1
-                                completed_doc_ids.add(metrics.document_id)
-                            elif metrics.status == "skipped":
-                                skipped_count += 1
-                            else:
-                                failed_count += 1
-                        except Exception:
+                # Harvest completed futures
+                completed_futures = {f for f in active_futures if f.done()}
+                for f in completed_futures:
+                    active_futures.remove(f)
+                    try:
+                        metrics, _ = f.result()
+                        total_pages_processed += metrics.pages
+                        total_download_ms += metrics.download_ms
+                        total_extract_ms += metrics.extract_ms
+                        total_entity_ms += metrics.entity_ms
+                        total_doc_ms += metrics.total_ms
+
+                        if metrics.status == "success":
+                            completed_count += 1
+                            completed_doc_ids.add(metrics.document_id)
+                        elif metrics.status == "skipped":
+                            skipped_count += 1
+                        else:
                             failed_count += 1
+                    except Exception:
+                        failed_count += 1
 
-                    # Asynchronously update state for Dedicated Drive Sync Thread
-                    now_time = time.time()
-                    drive_sync_worker.update_state({
-                        "run_id": self.config.run_id,
-                        "processed_count": completed_count + skipped_count + failed_count,
-                        "successful_count": completed_count,
-                        "skipped_count": skipped_count,
-                        "failed_count": failed_count,
-                        "total_pages": total_pages_processed,
-                        "completed_doc_ids": list(completed_doc_ids),
-                        "timestamp": now_time
-                    })
+                now_time = time.time()
+                # Asynchronously update state for Dedicated Drive Sync Thread
+                drive_sync_worker.update_state({
+                    "run_id": self.config.run_id,
+                    "processed_count": completed_count + skipped_count + failed_count,
+                    "successful_count": completed_count,
+                    "skipped_count": skipped_count,
+                    "failed_count": failed_count,
+                    "total_pages": total_pages_processed,
+                    "completed_doc_ids": list(completed_doc_ids),
+                    "timestamp": now_time
+                })
 
-                    # Live Stats Update
+                # Lightweight 30-Second Text Logger (0% stdout re-rendering overhead)
+                if now_time - last_log_time >= log_interval_sec:
+                    last_log_time = now_time
                     processed_so_far = completed_count + skipped_count + failed_count
                     elapsed = now_time - start_time
-                    avg_sec = elapsed / max(1, processed_so_far)
                     pdf_throughput = processed_so_far / max(0.001, elapsed)
                     pages_throughput = total_pages_processed / max(0.001, elapsed)
-                    eta_sec = (total_pdfs - processed_so_far) * avg_sec
-
+                    ram_mb = self.monitor.get_snapshot()["ram_used_mb"]
+                    pct = (processed_so_far / max(1, total_pdfs)) * 100.0
                     q_size = self.download_queue.qsize()
-                    live.update(self._generate_dashboard(
-                        processed_so_far, total_pdfs, completed_count, skipped_count, total_pdfs,
-                        total_pages_processed, q_size, failed_count, pdf_throughput,
-                        pages_throughput, eta_sec, total_download_ms, total_entity_ms, total_doc_ms
-                    ))
+
+                    print(f"[{time.strftime('%H:%M:%S')}] Progress: {processed_so_far}/{total_pdfs} ({pct:.1f}%) | "
+                          f"Speed: {pdf_throughput:.2f} PDFs/sec ({pages_throughput:.1f} pgs/sec) | "
+                          f"Queue: {q_size}/{self.max_queue_size} | RAM: {ram_mb} MB")
+
 
 
 
