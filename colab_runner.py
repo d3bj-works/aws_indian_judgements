@@ -46,16 +46,26 @@ def main():
             else:
                 s3_keys = [line.strip() for line in f if line.strip()]
     else:
-        # Fallback to test/sample SC dataset keys if file not specified
-        sample_keys_file = "./data/sc_keys_sample.json"
-        if os.path.exists(sample_keys_file):
-            with open(sample_keys_file, "r") as f:
-                s3_keys = json.load(f)
-        else:
-            console.print("[yellow]No S3 key list provided. Generating sample key list...[/yellow]")
-            s3_keys = [f"judgments/1950/doc_{i}.pdf" for i in range(1, args.limit + 1)]
+        # Fallback to sample key JSONs or live S3 bucket listing
+        for kfile in ["./data/hc_keys_sample.json", "./data/sc_keys_sample.json"]:
+            if os.path.exists(kfile):
+                with open(kfile, "r") as f:
+                    s3_keys = json.load(f)
+                break
+        
+        if not s3_keys:
+            console.print("[yellow]Fetching real S3 keys from AWS Open Data endpoint...[/yellow]")
+            import requests, xml.etree.ElementTree as ET
+            try:
+                r = requests.get("https://indian-supreme-court-judgments.s3.amazonaws.com/?max-keys=1000", timeout=10)
+                root = ET.fromstring(r.text)
+                ns = {"s3": "http://s3.amazonaws.com/doc/2006-03-01/"}
+                s3_keys = [elem.find("s3:Key", ns).text for elem in root.findall("s3:Contents", ns) if elem.find("s3:Key", ns).text.endswith(".pdf")]
+            except Exception as e:
+                console.print(f"[bold red]Failed to list bucket keys: {e}[/bold red]")
 
     s3_keys = s3_keys[:args.limit]
+
 
     # Initialize Pipeline Config for Colab (Dual-Path: Staging in Local Scratch, Parquet & Checkpoints in Drive)
     config = PipelineConfig(

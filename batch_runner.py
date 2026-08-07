@@ -17,22 +17,26 @@ from pipeline.tracker import MachineResourceMonitor
 
 from pipeline.downloader import PDFDownloader
 
+from pipeline.decoupled_runner import DecoupledPipelineScheduler
+
 class BatchScheduler:
     """
-    Schedules and executes PDF processing in configurable batches using ThreadPoolExecutor.
-    Supports continuous live terminal display, persistent HTTP connection pooling, checkpointing, RAM management, and resumability.
+    Schedules and executes PDF processing using a Decoupled Producer-Consumer Architecture.
+    - Producer thread streams PDF downloads continuously to saturate network bandwidth.
+    - Bounded Download Queue (max 8 PDFs) prevents disk/RAM explosion.
+    - Consumer thread pool processes CPU text & entity extraction concurrently.
+    - Immediate file purge deletes raw PDFs from disk immediately after text extraction.
     """
     
-    def __init__(self, config: PipelineConfig, storage: StorageManager):
+    def __init__(self, config: PipelineConfig, storage: StorageManager, max_queue_size: int = 8):
         self.config = config
         self.storage = storage
-        self.downloader = PDFDownloader(s3_base_url=config.s3_base_url, pool_maxsize=config.max_workers * 2)
-        self.processor = DocumentProcessor(config, storage, downloader=self.downloader)
-        self.monitor = MachineResourceMonitor()
+        self.decoupled_scheduler = DecoupledPipelineScheduler(config, storage, max_queue_size=max_queue_size)
         self.console = Console()
 
-
     def run_batch_pipeline(self, s3_keys: List[str]) -> Dict[str, Any]:
+        return self.decoupled_scheduler.run_decoupled_pipeline(s3_keys)
+
         total_pdfs = len(s3_keys)
         completed_count = 0
         skipped_count = 0
