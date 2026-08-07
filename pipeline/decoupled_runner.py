@@ -117,15 +117,18 @@ class DecoupledPipelineScheduler:
             f"CPU Consumer Threads: [yellow]{num_consumers}[/yellow]"
         ))
 
-        # --- Producer Thread Function ---
+        # --- Multi-Threaded Download Producer Pool (6 Parallel Downloader Threads) ---
+        num_producers = min(8, max(6, num_consumers))
+
+
         def download_producer():
-            for key in s3_keys:
+            def download_single_key(key: str):
                 doc_id = os.path.basename(key).replace(".pdf", "")
                 
                 # Fast Resume Check
                 if self.config.resume_enabled and (doc_id in completed_doc_ids or self.storage.is_document_processed(doc_id)):
-                    self.download_queue.put(("SKIPPED", key, doc_id, None, 0.0))
-                    continue
+                    self.download_queue.put(("SKIPPED", key, doc_id, None, 0.0, 0))
+                    return
 
                 t0 = time.perf_counter()
                 dest_pdf_path = self.storage.get_pdf_path(doc_id)
@@ -133,19 +136,23 @@ class DecoupledPipelineScheduler:
                 download_ms = (time.perf_counter() - t0) * 1000.0
 
                 if success:
-                    # Blocks automatically if download_queue reaches max_queue_size (8)
+                    # Blocks automatically if download_queue reaches max_queue_size
                     self.download_queue.put(("DOWNLOADED", key, doc_id, dest_pdf_path, download_ms, file_bytes))
                 else:
                     self.download_queue.put(("FAILED", key, doc_id, None, download_ms, 0))
 
+            with ThreadPoolExecutor(max_workers=num_producers) as prod_executor:
+                for key in s3_keys:
+                    prod_executor.submit(download_single_key, key)
 
             # Push sentinels to signal consumers to terminate
             for _ in range(num_consumers):
                 self.download_queue.put(sentinel)
 
-        # Launch Producer Thread
+        # Launch Multi-Threaded Producer Manager
         producer_thread = threading.Thread(target=download_producer, daemon=True)
         producer_thread.start()
+
 
         # --- Consumer Worker Processing ---
         def process_item(item: Any) -> Tuple[DocumentMetrics, Dict[str, Any]]:

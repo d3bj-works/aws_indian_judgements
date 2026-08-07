@@ -98,7 +98,8 @@ def main():
     # Default to 1000 unprocessed PDFs target (unless overridden by --limit)
     s3_keys = unprocessed_keys[:args.limit]
 
-    scheduler = BatchScheduler(config, storage)
+    scheduler = BatchScheduler(config, storage, max_queue_size=16)
+
 
 
     console.print(f"[bold cyan]Launching pipeline execution over {len(s3_keys):,} documents...[/bold cyan]")
