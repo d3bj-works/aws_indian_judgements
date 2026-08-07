@@ -78,14 +78,16 @@ def main():
     parser.add_argument("--output-dir", type=str, default="./output_1000", help="Base output directory (default: ./output_1000)")
     parser.add_argument("--keep-pdfs", action="store_true", help="Keep raw PDF files on disk after extraction (default: False)")
     parser.add_argument("--no-resume", action="store_true", help="Disable skipping already processed documents")
+    parser.add_argument("--export-parquet", action="store_true", help="Automatically export outputs to Parquet tables after processing")
     
     args = parser.parse_args()
     
     console = Console()
     console.print(Panel.fit(
-        f"[bold blue]Supreme Court PDF Pipeline - 1,000 PDF Processing Runner[/bold blue]\n"
+        f"[bold blue]Supreme Court PDF Pipeline - Processing Runner[/bold blue]\n"
         f"Target: [yellow]{args.limit} PDFs[/yellow] | Start Year: [yellow]{args.start_year}[/yellow] | "
-        f"Workers: [yellow]{args.workers}[/yellow] | Batch Size: [yellow]{args.batch_size}[/yellow]"
+        f"Workers: [yellow]{args.workers}[/yellow] | Batch Size: [yellow]{args.batch_size}[/yellow] | "
+        f"Auto-Parquet: [green]{args.export_parquet}[/green]"
     ))
 
     # Configure Pipeline
@@ -95,7 +97,8 @@ def main():
         batch_size=args.batch_size,
         max_workers=args.workers,
         keep_pdf_files=args.keep_pdfs,
-        resume_enabled=not args.no_resume
+        resume_enabled=not args.no_resume,
+        auto_export_parquet=args.export_parquet
     )
     storage = StorageManager(config)
 
@@ -120,6 +123,12 @@ def main():
     console.print(f"\n[bold yellow]Launching Batch Execution Engine for {len(s3_keys)} Documents...[/bold yellow]")
     scheduler = BatchScheduler(config, storage)
     summary = scheduler.run_batch_pipeline(s3_keys)
+
+    # Auto Parquet Export if requested
+    if args.export_parquet:
+        console.print("\n[bold cyan]Exporting outputs to Apache Parquet...[/bold cyan]")
+        parquet_summary = storage.export_to_parquet()
+        summary["parquet_dir"] = parquet_summary["parquet_dir"]
 
     # Print Final Summary Table
     summary_table = Table(title="[bold green]Final Pipeline Execution Summary[/bold green]")

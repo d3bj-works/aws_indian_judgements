@@ -24,6 +24,8 @@ class PipelineConfig:
     logs_dir: str = field(init=False)
     benchmarks_dir: str = field(init=False)
     checkpoints_dir: str = field(init=False)
+    parquet_dir: str = field(init=False)
+    auto_export_parquet: bool = False
 
     def __post_init__(self):
         self.pdf_dir = os.path.join(self.base_output_dir, "pdf")
@@ -34,6 +36,7 @@ class PipelineConfig:
         self.logs_dir = os.path.join(self.base_output_dir, "logs")
         self.benchmarks_dir = os.path.join(self.base_output_dir, "benchmarks")
         self.checkpoints_dir = os.path.join(self.base_output_dir, "checkpoints")
+        self.parquet_dir = os.path.join(self.base_output_dir, "parquet")
 
     def ensure_directories(self):
         """Creates all intermediate storage directories if they do not exist."""
@@ -46,5 +49,6 @@ class PipelineConfig:
             self.logs_dir,
             self.benchmarks_dir,
             self.checkpoints_dir,
+            self.parquet_dir,
         ]:
             os.makedirs(d, exist_ok=True)

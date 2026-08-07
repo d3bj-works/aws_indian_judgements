@@ -114,8 +114,15 @@ class StorageManager:
                 pass
         return False
 
+    def export_to_parquet(self) -> Dict[str, Any]:
+        """Converts output directory into metadata.parquet, entities.parquet, and documents_text.parquet."""
+        from pipeline.parquet_exporter import ParquetExporter
+        exporter = ParquetExporter(self.config.base_output_dir)
+        return exporter.export_all()
+
     @staticmethod
     def _safe_filename(doc_id: str) -> str:
         """Sanitizes doc_id for filesystem use."""
         return doc_id.replace("/", "_").replace("\\", "_").replace(" ", "_").replace("=", "_")
+
 
