@@ -34,10 +34,10 @@ class PDFDownloader:
             self.session.mount("https://", adapter)
             self.session.mount("http://", adapter)
 
-    def download_pdf(self, s3_key: str, dest_path: str, timeout: int = 15) -> Tuple[bool, str]:
+    def download_pdf(self, s3_key: str, dest_path: str, timeout: int = 15) -> Tuple[bool, str, int]:
         """
         Downloads a PDF from S3 key to dest_path using persistent connection pool.
-        Returns (success: bool, message: str)
+        Returns (success: bool, message: str, file_size_bytes: int)
         """
         if s3_key.startswith("http://") or s3_key.startswith("https://"):
             url = s3_key
@@ -49,16 +49,19 @@ class PDFDownloader:
         try:
             response = self.session.get(url, stream=True, timeout=timeout)
             if response.status_code != 200:
-                return False, f"HTTP Error {response.status_code} fetching {url}"
+                return False, f"HTTP Error {response.status_code} fetching {url}", 0
             
+            file_size = 0
             with open(dest_path, "wb") as f:
-                for chunk in response.iter_content(chunk_size=16384):
+                for chunk in response.iter_content(chunk_size=65536):
                     if chunk:
                         f.write(chunk)
+                        file_size += len(chunk)
                         
-            return True, "Download successful"
+            return True, "Download successful", file_size
         except Exception as e:
-            return False, f"Download failed: {str(e)}"
+            return False, f"Download failed: {str(e)}", 0
+
 
 
     def validate_pdf(self, file_path: str) -> Tuple[bool, str]:

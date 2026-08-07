@@ -54,7 +54,34 @@ class TextCleaner:
         return "\n".join(lines).strip()
 
     @staticmethod
+    def is_english_key(s3_key: str) -> bool:
+        """
+        Returns True if S3 key represents an English judgment PDF.
+        Excludes vernacular translation tags (e.g. _HI, _BN, _TA, _TE, _MR, _KN, _ML, _OR, _GU, _PA).
+        """
+        key_lower = s3_key.lower()
+        non_english_suffixes = ("_hi.pdf", "_bn.pdf", "_ta.pdf", "_te.pdf", "_mr.pdf", "_kn.pdf", "_ml.pdf", "_or.pdf", "_gu.pdf", "_pa.pdf", "_ur.pdf")
+        if any(key_lower.endswith(s) for s in non_english_suffixes):
+            return False
+        if "/hindi/" in key_lower or "/bengali/" in key_lower or "/marathi/" in key_lower or "/tamil/" in key_lower:
+            return False
+        return True
+
+    @staticmethod
+    def is_english_text(text: str, min_ascii_ratio: float = 0.80) -> bool:
+        """
+        Verifies if extracted text is primarily English (latin ASCII script).
+        Returns False for non-English translated judgments.
+        """
+        if not text or len(text) < 50:
+            return True
+        ascii_chars = sum(1 for c in text[:2000] if ord(c) < 128)
+        ratio = ascii_chars / min(2000, len(text))
+        return ratio >= min_ascii_ratio
+
+    @staticmethod
     def extract_paragraphs(cleaned_text: str) -> List[Dict[str, Any]]:
+
         """
         Splits cleaned text into paragraphs, computing character start/end offsets.
         """

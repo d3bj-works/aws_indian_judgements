@@ -88,14 +88,15 @@ class DecoupledPipelineScheduler:
 
                 t0 = time.perf_counter()
                 dest_pdf_path = self.storage.get_pdf_path(doc_id)
-                success, msg = self.downloader.download_pdf(key, dest_pdf_path)
+                success, msg, file_bytes = self.downloader.download_pdf(key, dest_pdf_path)
                 download_ms = (time.perf_counter() - t0) * 1000.0
 
                 if success:
                     # Blocks automatically if download_queue reaches max_queue_size (8)
-                    self.download_queue.put(("DOWNLOADED", key, doc_id, dest_pdf_path, download_ms))
+                    self.download_queue.put(("DOWNLOADED", key, doc_id, dest_pdf_path, download_ms, file_bytes))
                 else:
-                    self.download_queue.put(("FAILED", key, doc_id, None, download_ms))
+                    self.download_queue.put(("FAILED", key, doc_id, None, download_ms, 0))
+
 
             # Push sentinels to signal consumers to terminate
             for _ in range(num_consumers):
@@ -106,12 +107,18 @@ class DecoupledPipelineScheduler:
         producer_thread.start()
 
         # --- Consumer Worker Processing ---
-        def process_item(item: Tuple[str, str, str, str, float]) -> Tuple[DocumentMetrics, Dict[str, Any]]:
-            status_tag, key, doc_id, pdf_path, download_ms = item
+        def process_item(item: Any) -> Tuple[DocumentMetrics, Dict[str, Any]]:
+            if len(item) == 6:
+                status_tag, key, doc_id, pdf_path, download_ms, file_bytes = item
+            else:
+                status_tag, key, doc_id, pdf_path, download_ms = item[:5]
+                file_bytes = 0
+
             metrics = DocumentMetrics(document_id=doc_id)
             metrics.download_ms = download_ms
-            output_artifacts = {}
+            output_artifacts = {"file_bytes": file_bytes}
             start_total = time.perf_counter()
+
 
             if status_tag == "SKIPPED":
                 metrics.status = "skipped"
@@ -183,10 +190,14 @@ class DecoupledPipelineScheduler:
                 self.storage.save_document_metrics(metrics)
                 return metrics, output_artifacts
 
+        last_drive_sync = time.time()
+        sync_interval_sec = 180  # Save progress to Google Drive every 3 minutes (180 seconds)
+
         # Live Dashboard Loop
         with Live(self._generate_dashboard(0, total_pdfs, 0, 0, total_pdfs, 0, 0, 0, 0, 0, 0, 0, 0), refresh_per_second=4) as live:
             with ThreadPoolExecutor(max_workers=num_consumers) as executor:
                 active_futures = set()
+
 
                 while True:
                     # Pop next item from Producer Queue
@@ -222,9 +233,24 @@ class DecoupledPipelineScheduler:
                         except Exception:
                             failed_count += 1
 
+                    # 3-Minute Periodic Drive Checkpoint Sync (Every 180 seconds)
+                    now_time = time.time()
+                    if now_time - last_drive_sync >= sync_interval_sec:
+                        last_drive_sync = now_time
+                        self.storage.save_checkpoint({
+                            "run_id": self.config.run_id,
+                            "processed_count": completed_count + skipped_count + failed_count,
+                            "successful_count": completed_count,
+                            "skipped_count": skipped_count,
+                            "failed_count": failed_count,
+                            "total_pages": total_pages_processed,
+                            "completed_doc_ids": list(completed_doc_ids),
+                            "timestamp": now_time
+                        })
+
                     # Live Stats Update
                     processed_so_far = completed_count + skipped_count + failed_count
-                    elapsed = time.time() - start_time
+                    elapsed = now_time - start_time
                     avg_sec = elapsed / max(1, processed_so_far)
                     pdf_throughput = processed_so_far / max(0.001, elapsed)
                     pages_throughput = total_pages_processed / max(0.001, elapsed)
@@ -236,6 +262,7 @@ class DecoupledPipelineScheduler:
                         total_pages_processed, q_size, failed_count, pdf_throughput,
                         pages_throughput, eta_sec, total_download_ms, total_entity_ms, total_doc_ms
                     ))
+
 
                 # Drain remaining consumer futures
                 for f in active_futures:
@@ -316,3 +343,4 @@ class DecoupledPipelineScheduler:
         table.add_row("RAM Used RSS", f"{res['ram_used_mb']} MB")
 
         return Panel(table, title="[bold green]Producer-Consumer Streaming Dashboard[/bold green]", expand=False)
+

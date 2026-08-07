@@ -14,7 +14,7 @@ class PyMuPDFTextExtractor(BaseTextExtractor):
         
         for page in doc:
             text_pages.append(page.get_text())
-            
+
         full_text = "\n\n".join(text_pages)
         doc_metadata = doc.metadata or {}
         doc.close()

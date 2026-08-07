@@ -64,10 +64,7 @@ def main():
             except Exception as e:
                 console.print(f"[bold red]Failed to list bucket keys: {e}[/bold red]")
 
-    s3_keys = s3_keys[:args.limit]
-
-
-    # Initialize Pipeline Config for Colab (Dual-Path: Staging in Local Scratch, Parquet & Checkpoints in Drive)
+    # Initialize Pipeline Storage & Checkpoint to filter out already processed document IDs
     config = PipelineConfig(
         run_id=args.run_id,
         base_output_dir=args.scratch_dir,
@@ -79,9 +76,30 @@ def main():
         keep_intermediate_artifacts=args.keep_artifacts,
         resume_enabled=True
     )
-
     storage = StorageManager(config)
+
+    # Deduplication & Resume Check: Exclude documents already processed in prior runs
+    ckpt = storage.load_checkpoint()
+    completed_doc_ids = set(ckpt.get("completed_doc_ids", []))
+    if not completed_doc_ids:
+        completed_doc_ids = storage.get_completed_doc_ids()
+
+    from pipeline.cleaner import TextCleaner
+
+    unprocessed_keys = []
+    for k in s3_keys:
+        doc_id = os.path.basename(k).replace(".pdf", "")
+        if TextCleaner.is_english_key(k) and doc_id not in completed_doc_ids and not storage.is_document_processed(doc_id):
+            unprocessed_keys.append(k)
+
+    console.print(f"[bold cyan]Found {len(s3_keys):,} total keys | {len(completed_doc_ids):,} already completed | {len(unprocessed_keys):,} English unprocessed keys remaining.[/bold cyan]")
+
+
+    # Default to 1000 unprocessed PDFs target (unless overridden by --limit)
+    s3_keys = unprocessed_keys[:args.limit]
+
     scheduler = BatchScheduler(config, storage)
+
 
     console.print(f"[bold cyan]Launching pipeline execution over {len(s3_keys):,} documents...[/bold cyan]")
     start_time = time.time()
