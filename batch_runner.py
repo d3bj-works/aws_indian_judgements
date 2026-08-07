@@ -48,6 +48,12 @@ class BatchScheduler:
         
         # Load checkpoint info if available
         ckpt = self.storage.load_checkpoint() if self.config.resume_enabled else {}
+        last_completed_batch = ckpt.get("last_completed_batch", 0)
+        
+        # Restore stats from checkpoint if available
+        if last_completed_batch > 0:
+            skipped_count = ckpt.get("processed_count", last_completed_batch * batch_size)
+            total_pages_processed = ckpt.get("total_pages", 0)
         
         # Partition keys into batches
         batches = [s3_keys[i:i + batch_size] for i in range(0, total_pdfs, batch_size)]
@@ -57,11 +63,15 @@ class BatchScheduler:
             f"[bold blue]Starting Batch Execution Engine[/bold blue]\n"
             f"Run ID: [yellow]{self.config.run_id}[/yellow] | Total PDFs: [yellow]{total_pdfs}[/yellow] | "
             f"Workers: [yellow]{max_workers}[/yellow] | Batch Size: [yellow]{batch_size}[/yellow] | "
-            f"Resume: [green]{self.config.resume_enabled}[/green] | Keep PDFs: [magenta]{self.config.keep_pdf_files}[/magenta]"
+            f"Resume: [green]{self.config.resume_enabled}[/green] (Resuming from batch {last_completed_batch+1}/{total_batches})"
         ))
 
-        with Live(self._generate_dashboard(1, total_batches, completed_count, skipped_count, total_pdfs, 0, 0, failed_count, 0, 0, 0, 0, 0, 0), refresh_per_second=4) as live:
+        with Live(self._generate_dashboard(max(1, last_completed_batch), total_batches, completed_count, skipped_count, total_pdfs, total_pages_processed, 0, failed_count, 0, 0, 0, 0, 0, 0), refresh_per_second=4) as live:
             for b_idx, batch in enumerate(batches, start=1):
+                # Fast Checkpoint Resume: Skip entire batch if already completed in checkpoint
+                if self.config.resume_enabled and b_idx <= last_completed_batch:
+                    continue
+
                 batch_start = time.time()
                 
                 with ThreadPoolExecutor(max_workers=max_workers) as executor:
