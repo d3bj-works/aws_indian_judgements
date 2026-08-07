@@ -21,14 +21,55 @@ from pipeline.metadata import MetadataExtractor
 from pipeline.entities import EntityExtractor
 from pipeline.tracker import DocumentMetrics, MachineResourceMonitor
 
+class AsyncDriveSyncWorker:
+    """
+    Dedicated background thread worker for handling 180-second periodic Google Drive progress saves.
+    Saves checkpoint.json and logs asynchronously to Google Drive without pausing main pipeline execution.
+    """
+    def __init__(self, storage: StorageManager, interval_sec: int = 180):
+        self.storage = storage
+        self.interval_sec = interval_sec
+        self.stop_event = threading.Event()
+        self.latest_state: Dict[str, Any] = {}
+        self.lock = threading.Lock()
+        self.thread = threading.Thread(target=self._sync_loop, daemon=True)
+
+    def update_state(self, checkpoint_data: Dict[str, Any]):
+        with self.lock:
+            self.latest_state = checkpoint_data.copy()
+
+    def force_sync(self):
+        with self.lock:
+            data = self.latest_state.copy()
+        if data:
+            self.storage.save_checkpoint(data)
+
+    def _sync_loop(self):
+        while not self.stop_event.is_set():
+            if self.stop_event.wait(timeout=self.interval_sec):
+                break
+            self.force_sync()
+        self.force_sync()
+
+    def start(self):
+        self.thread.start()
+
+    def stop(self):
+        self.stop_event.set()
+        if self.thread.is_alive():
+            self.thread.join(timeout=5)
+        self.force_sync()
+
 class DecoupledPipelineScheduler:
     """
     Producer-Consumer Pipeline Scheduler:
     - Dedicated Producer Thread: Continuously streams PDF downloads from S3, saturating network bandwidth.
     - Bounded Download Queue (maxsize=8): Ensures at most 8 unprocessed PDFs exist on disk/RAM at any moment.
     - Consumer Worker Pool: Parallel CPU threads for text extraction, regex/NER entity parsing, and storage.
+    - Dedicated Drive Sync Thread: Asynchronously writes checkpoints & Parquet updates to Google Drive every 180 seconds.
     - Immediate File Purge: Raw PDFs are deleted from disk immediately after text extraction.
     """
+
 
     def __init__(self, config: PipelineConfig, storage: StorageManager, max_queue_size: int = 8):
         self.config = config
@@ -190,14 +231,14 @@ class DecoupledPipelineScheduler:
                 self.storage.save_document_metrics(metrics)
                 return metrics, output_artifacts
 
-        last_drive_sync = time.time()
-        sync_interval_sec = 180  # Save progress to Google Drive every 3 minutes (180 seconds)
+        # Launch Dedicated Background Drive Sync Thread (Saves checkpoint & logs every 180s without pausing execution)
+        drive_sync_worker = AsyncDriveSyncWorker(self.storage, interval_sec=180)
+        drive_sync_worker.start()
 
         # Live Dashboard Loop
         with Live(self._generate_dashboard(0, total_pdfs, 0, 0, total_pdfs, 0, 0, 0, 0, 0, 0, 0, 0), refresh_per_second=4) as live:
             with ThreadPoolExecutor(max_workers=num_consumers) as executor:
                 active_futures = set()
-
 
                 while True:
                     # Pop next item from Producer Queue
@@ -233,20 +274,18 @@ class DecoupledPipelineScheduler:
                         except Exception:
                             failed_count += 1
 
-                    # 3-Minute Periodic Drive Checkpoint Sync (Every 180 seconds)
+                    # Asynchronously update state for Dedicated Drive Sync Thread
                     now_time = time.time()
-                    if now_time - last_drive_sync >= sync_interval_sec:
-                        last_drive_sync = now_time
-                        self.storage.save_checkpoint({
-                            "run_id": self.config.run_id,
-                            "processed_count": completed_count + skipped_count + failed_count,
-                            "successful_count": completed_count,
-                            "skipped_count": skipped_count,
-                            "failed_count": failed_count,
-                            "total_pages": total_pages_processed,
-                            "completed_doc_ids": list(completed_doc_ids),
-                            "timestamp": now_time
-                        })
+                    drive_sync_worker.update_state({
+                        "run_id": self.config.run_id,
+                        "processed_count": completed_count + skipped_count + failed_count,
+                        "successful_count": completed_count,
+                        "skipped_count": skipped_count,
+                        "failed_count": failed_count,
+                        "total_pages": total_pages_processed,
+                        "completed_doc_ids": list(completed_doc_ids),
+                        "timestamp": now_time
+                    })
 
                     # Live Stats Update
                     processed_so_far = completed_count + skipped_count + failed_count
@@ -262,6 +301,7 @@ class DecoupledPipelineScheduler:
                         total_pages_processed, q_size, failed_count, pdf_throughput,
                         pages_throughput, eta_sec, total_download_ms, total_entity_ms, total_doc_ms
                     ))
+
 
 
                 # Drain remaining consumer futures
@@ -286,17 +326,9 @@ class DecoupledPipelineScheduler:
 
         producer_thread.join()
 
-        # Save Checkpoint with completed IDs
-        self.storage.save_checkpoint({
-            "run_id": self.config.run_id,
-            "processed_count": completed_count + skipped_count + failed_count,
-            "successful_count": completed_count,
-            "skipped_count": skipped_count,
-            "failed_count": failed_count,
-            "total_pages": total_pages_processed,
-            "completed_doc_ids": list(completed_doc_ids),
-            "timestamp": time.time()
-        })
+        # Stop Dedicated Drive Sync Thread and perform final atomic flush to Google Drive
+        drive_sync_worker.stop()
+
 
         total_duration = time.time() - start_time
         processed_total = completed_count + skipped_count
